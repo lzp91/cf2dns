@@ -28,7 +28,7 @@ AFFECT_NUM = 2
 #DNS服务商 如果使用DNSPod改为1 如果使用阿里云解析改成2
 DNS_SERVER = 1
 #解析生效时间，默认为600秒 如果不是DNS付费版用户 不要修改!!!
-TTL = 600
+TTL = 60
 
 urllib3.disable_warnings()
 
@@ -51,7 +51,7 @@ def changeDNS(line, s_info, c_info, domain, sub_domain, cloud):
     elif line == "CU":
         line = "联通"
     elif line == "CT":
-        line = "电信"
+        line = "默认"
     else:
         print("CHANGE DNS ERROR: ----Time: " + str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())) + "----MESSAGE: LINE ERROR")
         return
@@ -118,7 +118,7 @@ def main(cloud):
                         ret = cloud.get_record(domain, 20, sub_domain, "CNAME")
                         if ret["code"] == 0:
                             for record in ret["data"]["records"]:
-                                if record["line"] == "移动" or record["line"] == "联通" or record["line"] == "电信":
+                                if record["line"] == "联通" or record["line"] == "默认":
                                     retMsg = cloud.del_record(domain, record["id"])
                                     if(retMsg["code"] == 0):
                                         print("DELETE DNS SUCCESS: ----Time: "  + str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())) + "----DOMAIN: " + domain + "----SUBDOMAIN: " + sub_domain + "----RECORDLINE: "+record["line"] )
@@ -142,7 +142,7 @@ def main(cloud):
                                 info["recordId"] = record["id"]
                                 info["value"] = record["value"]
                                 cu_info.append(info)
-                            if record["line"] == "电信":
+                            if record["line"] == "默认":
                                 info = {}
                                 info["recordId"] = record["id"]
                                 info["value"] = record["value"]
